@@ -31,12 +31,13 @@ local key2App = {
 	q = 'QQ',
     s = 'Safari',
     g = 'Google Chrome',
-    a = 'Atom',
+    -- a = 'Atom',
     w = 'WeChat',
     --g = 'SourceTree',
-    f = 'Finder',
-    i = 'iTerm',
+    -- f = 'Finder',
+    i = 'Alacritty',
     e = 'Alacritty',
+    -- e = 'Emacs.app',
     d = 'DingTalk'
 }
 for key, app in pairs(key2App) do
