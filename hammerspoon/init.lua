@@ -16,7 +16,7 @@ if not hs.ipc.cliStatus() then hs.ipc.cliInstall() end
 
 
 --move focus to another scree
-hs.hotkey.bind(hyper, '`', function()
+hs.hotkey.bind(hyper, 'escape', function()
     local screen = hs.mouse.getCurrentScreen()
     local nextScreen = screen:next()
     local rect = nextScreen:fullFrame()
@@ -28,17 +28,17 @@ end)
 
 -- App shortcuts
 local key2App = {
-	q = 'QQ',
+	-- q = 'QQ',
     s = 'Safari',
     g = 'Google Chrome',
-    -- a = 'Atom',
+    j = 'IntelliJ IDEA Community',
+    a = 'Android Studio',
+    c = 'XCode',
     w = 'WeChat',
-    --g = 'SourceTree',
-    -- f = 'Finder',
-    i = 'Alacritty',
-    e = 'Alacritty',
-    -- e = 'Emacs.app',
-    d = 'DingTalk'
+    i = 'iTerm.app',
+    e = 'Emacs.app',
+    d = 'DingTalk',
+    m = "Mail"
 }
 for key, app in pairs(key2App) do
 	hs.hotkey.bind(hyper, key, function() hs.application.launchOrFocus(app) end)
@@ -179,11 +179,12 @@ end
 -- App layout
 local AppLayout = {}
 AppLayout['QQ'] = { small = true }
-AppLayout['Safari'] = { small = true, full = true }
-AppLayout['SourceTree'] = { small = true }
 AppLayout['Finder'] = { small = true }
 AppLayout['iTerm'] = { small = true }
+AppLayout['Emacs'] = { small = true, full = true, delay = 10 }
 AppLayout['Xcode'] = { small = true, full = true, delay = 10 }
+AppLayout['Android Studio'] = { large = true, full = true, delay = 10 }
+AppLayout['Chrome'] = { large = true, full = true, delay = 1 }
 
 function layoutApp(name, app, delayed)
     local conf = AppLayout[name]
@@ -280,11 +281,19 @@ hs.hotkey.bind(hyperShift, 'c', function()
     end
 end)
 
+hs.hotkey.bind(hyperShift, 'l', function() 
+    hs.caffeinate.lockScreen()
+end)
+
+hs.hotkey.bind(hyperShift, "return", function()
+  local win = hs.window.frontmostWindow()
+  win:setFullscreen(not win:isFullscreen())
+end)
+
 function addMenuCaff()
     menuCaff = hs.menubar.new()
     menuCaff:setIcon("caffeine-on.pdf")
-    menuCaff:setClickCallback(menuCaffRelease)
-end
+    menuCaff:setClickCallback(menuCaffRelease) end
 
 function menuCaffRelease()
     local c = hs.caffeinate
@@ -309,7 +318,7 @@ end
 hs.hotkey.bind(hyperShift, ';', hs.openConsole)
 
 -- reload
-hs.hotkey.bind(hyper, 'escape', function() hs.reload() end )
+-- hs.hotkey.bind(hyper, 'escape', function() hs.reload() end )
 
 -- utils
 function getAllValidWindows ()
@@ -325,5 +334,26 @@ function getAllValidWindows ()
     end
     return windows
 end
+
+
+-- keyRemap
+local function remapKey(modifiers, key, keyCode)
+   hs.hotkey.bind(modifiers, key, keyCode, nil, keyCode)
+end
+
+local delay = hs.eventtap.keyRepeatDelay()
+local function keyCode(key, modifiers)
+   modifiers = modifiers or {}
+   return function()
+      hs.eventtap.keyStroke(modifiers, key, delay)
+   end
+end
+
+remapKey({'ctrl'}, 'p', keyCode('up'))
+remapKey({'ctrl'}, 'n', keyCode('down'))
+remapKey({'cmd'}, 'escape', keyCode('`', {"cmd"}))
+remapKey({'shift'}, 'escape', keyCode('`', {"shift"}))
+remapKey({'ctrl'}, 'escape', keyCode('`'))
+remapKey({'ctrl'}, '`', keyCode('`'))
 
 hs.alert('Hammerspoon', 0.6)
